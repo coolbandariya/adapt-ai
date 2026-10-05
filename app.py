@@ -52,8 +52,8 @@ app.add_middleware(
         "null",  # file:// origin, sent by browsers when index.html is opened directly
     ],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
 )
 
 class ChatPayload(BaseModel):
@@ -355,6 +355,11 @@ async def get_live_metrics():
 
 @app.post("/api/execute")
 async def execute_python_code(payload: CodePayload):
+    # Arbitrary Python execution is intentionally disabled by default. A
+    # subprocess timeout is not a security sandbox: Python can still reach
+    # the filesystem, network, OS interfaces, or consume host resources.
+    if os.getenv("ADAPT_ENABLE_CODE_EXECUTION", "").lower() != "true":
+        raise HTTPException(status_code=403, detail="Local code execution is disabled by default.")
     # Run in a separate subprocess (not in-process exec()) so a crash, hang,
     # or attempt to touch the server's own state can't affect this app --
     # the child process is disposable and killed on timeout.
@@ -449,4 +454,4 @@ async def chat_stream(payload: ChatPayload):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app:app", host=os.getenv("ADAPT_HOST", "127.0.0.1"), port=int(os.getenv("ADAPT_PORT", "8000")), reload=True)
