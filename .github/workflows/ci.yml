@@ -27,3 +27,6 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Compile Python sources
         run: python -m compileall -q .
+      - name: Check local-only execution guard
+        run: |
+          python -c "from pathlib import Path; s=Path(\"app.py\").read_text(); assert \"ADAPT_ENABLE_CODE_EXECUTION\" in s; assert \"ADAPT_HOST\" in s; assert \"127.0.0.1\" in s; assert \"allow_origins=[\" in s"
