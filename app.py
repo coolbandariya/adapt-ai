@@ -49,7 +49,6 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:8000",
         "http://127.0.0.1:8000",
-        "null",  # file:// origin, sent by browsers when index.html is opened directly
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST"],
