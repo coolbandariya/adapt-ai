@@ -128,7 +128,7 @@ the full model catalog (reproducible with
    This runs on `http://0.0.0.0:8000` by default. If Ollama is not already
    running, the app will start it automatically and shut it down when the
    server exits.
-5. `index.html` opens automatically in your default browser after startup.
+5. `index.html` opens automatically in your default browser after startup. The server binds to `127.0.0.1` by default; set `ADAPT_HOST` only when you intentionally need another interface.
 
 ### Sample usage
 
@@ -150,7 +150,7 @@ the full model catalog (reproducible with
 | `/api/metrics`     | GET    | Live RAM/VRAM usage                                     |
 | `/api/benchmark`   | GET    | Hardware compatibility score + model recommendation     |
 | `/api/chat`        | POST   | Streaming chat completion via Ollama (SSE)              |
-| `/api/execute`     | POST   | Runs submitted Python code and returns captured output  |
+| `/api/execute`     | POST   | Runs submitted Python code only when explicitly enabled  |
 
 ## Attribution
 
