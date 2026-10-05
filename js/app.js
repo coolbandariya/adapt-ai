@@ -243,7 +243,12 @@ function attachCodeSandboxActionButtons(containerId) {
             btn.innerText = "⏳ Executing..."; consoleBox.classList.remove('hidden'); consoleBox.innerText = "Initializing runtime space...";
             try {
                 const res = await fetch(`${API_BASE}/execute`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ code: pureCodeString }) });
-                const runResult = await res.json(); 
+                const runResult = await res.json();
+                if (res.status === 403) {
+                    consoleBox.innerText = runResult.detail || "Python execution is disabled by default. Enable ADAPT_ENABLE_CODE_EXECUTION only for trusted local code.";
+                    consoleBox.className = "console-output mt-2 p-2 bg-slate-950 border border-white/5 rounded-lg font-mono text-[11px] whitespace-pre-wrap text-amber-300";
+                    return;
+                } 
                 consoleBox.innerText = runResult.output;
                 consoleBox.className = `console-output mt-2 p-2 bg-slate-950 border border-white/5 rounded-lg font-mono text-[11px] whitespace-pre-wrap ${runResult.success ? 'text-emerald-400' : 'text-rose-400'}`;
             } catch { consoleBox.innerText = "Runtime pipeline handshake dropped."; } finally { btn.innerText = "▶ Execute Python"; }
